@@ -11,6 +11,10 @@ echo "New changes copied to server !"
 source .venv/bin/activate
 echo "Virtual env '.venv' Activated !"
 
+echo "Clearing Cache..."
+python manage.py clean_pyc
+python manage.py clear_cache
+
 echo "Installing Dependencies..."
 pip install -r requirements.txt --no-input
 
@@ -25,9 +29,8 @@ python manage.py migrate
 deactivate
 echo "Virtual env '.venv' Deactivated !"
 
-# Reloading Application So New Changes could reflect on website
-pushd shoppinglyx
-touch wsgi.py
-popd
+echo "Reloading App..."
+#kill -HUP `ps -C gunicorn fch -o pid | head -n 1`
+ps aux |grep gunicorn |grep inner_project_folder_name | awk '{ print $2 }' |xargs kill -HUP
 
 echo "Deployment Finished!"
